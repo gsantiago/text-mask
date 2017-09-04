@@ -1,4 +1,5 @@
 import React from 'react'
+import ReactDOM from 'react-dom'
 import PropTypes from 'prop-types'
 import createTextMaskInputElement
   from '../../core/src/createTextMaskInputElement'
@@ -6,9 +7,13 @@ import createTextMaskInputElement
 export default class MaskedInput extends React.Component {
   initTextMask() {
     const {props, props: {value}} = this
+    const node = ReactDOM.findDOMNode(this)
+    const inputElement = node.nodeName.toLowerCase() === 'input'
+      ? node
+      : node.querySelector('input')
 
     this.textMaskInputElement = createTextMaskInputElement({
-      inputElement: this.inputElement,
+      inputElement,
       ...props,
     })
     this.textMaskInputElement.update(value)
@@ -24,6 +29,7 @@ export default class MaskedInput extends React.Component {
 
   render() {
     const props = {...this.props}
+    const Component = this.props.component
 
     delete props.mask
     delete props.guide
@@ -33,13 +39,13 @@ export default class MaskedInput extends React.Component {
     delete props.value
     delete props.onChange
     delete props.showMask
+    delete props.component
 
     return (
-      <input
+      <Component
         {...props}
         onInput={event => this.onChange(event)}
         defaultValue={this.props.value}
-        ref={(inputElement) => (this.inputElement = inputElement)}
       />
     )
   }
@@ -69,6 +75,11 @@ MaskedInput.propTypes = {
   placeholderChar: PropTypes.string,
   keepCharPositions: PropTypes.bool,
   showMask: PropTypes.bool,
+  component: PropTypes.oneOfType([PropTypes.string, PropTypes.func])
+}
+
+MaskedInput.defaultProps = {
+  component: 'input'
 }
 
 export {default as conformToMask} from '../../core/src/conformToMask.js'
