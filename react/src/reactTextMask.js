@@ -31,6 +31,8 @@ export default class MaskedInput extends React.Component {
     const props = {...this.props}
     const Component = this.props.component
 
+    console.log('test mask hehe')
+
     delete props.mask
     delete props.guide
     delete props.pipe
